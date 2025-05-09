@@ -1,0 +1,9 @@
+FROM python:3.13.3-slim
+WORKDIR /app
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+COPY . .
+EXPOSE 6969
+ENV APP_SETTINGS=config.ProductionConfig
+ENV DATABASE_URL=sqlite:///app.db
+CMD ["python", "run.py"]
