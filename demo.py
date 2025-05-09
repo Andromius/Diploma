@@ -44,7 +44,7 @@ def train():
     # Load datasets
     train_dataset = get_coco_dataset(
         img_dir="images",
-        ann_file="via_project_18Feb2025_4h6m_coco.json"
+        ann_file="instances_default.json"
     )
 
     # DataLoader
@@ -53,6 +53,7 @@ def train():
     # Move model to GPU if available
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model.to(device)
+    print(torch.cuda.is_available())
 
     # Define optimizer and learning rate scheduler
     params = [p for p in model.parameters() if p.requires_grad]
@@ -110,7 +111,7 @@ def train():
 
 
     # Training loop
-    num_epochs = 5
+    num_epochs = 10
     for epoch in range(num_epochs):
         train_one_epoch(model, optimizer, train_loader, device, epoch)
         lr_scheduler.step()
@@ -129,7 +130,7 @@ def predict():
 
     # Load the trained model
     model = get_model(num_classes)
-    model.load_state_dict(torch.load("fasterrcnn_resnet50_epoch_5.pth"))
+    model.load_state_dict(torch.load("fasterrcnn_resnet50_epoch_8.pth"))
     model.to(device)
     model.eval()  # Set the model to evaluation mode
 
@@ -158,6 +159,7 @@ def predict():
         boxes = prediction[0]['boxes'].cpu().numpy()  # Get predicted bounding boxes
         labels = prediction[0]['labels'].cpu().numpy()  # Get predicted labels
         scores = prediction[0]['scores'].cpu().numpy()  # Get predicted scores
+        print(prediction[0].keys())
         
         # Set a threshold for showing boxes (e.g., score > 0.5)
         threshold = 0.2
@@ -186,7 +188,7 @@ def predict():
         
 
 
-    image_paths = ["images/05.JPG", "images/13.JPG"]  
+    image_paths = ["images/06.jpg"]  
     # Display the image with bounding boxes and correct labels
     for path in image_paths:
         image_tensor = prepare_image(path)
