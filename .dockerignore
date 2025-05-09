@@ -1,0 +1,13 @@
+*
+
+!flaskr/
+!flaskr/**
+
+!filters/
+!filters/**
+
+!pipeline/
+!pipeline/**
+
+!run.py
+!requirements.txt
