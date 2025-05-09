@@ -2,3 +2,4 @@ labels
 images
 fasterrcnn*
 *.json
+.venv
