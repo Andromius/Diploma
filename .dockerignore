@@ -5,3 +5,6 @@ example/
 README.md
 tests/
 Dockerfile*
+
+*.pth
+!maskrcnn_resnet50_epoch_10.pth

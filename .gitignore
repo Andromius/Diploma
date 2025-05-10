@@ -3,7 +3,9 @@ images
 fasterrcnn*
 *.json
 .venv
+rblfw_imgs/
 
+*.pth
 .venv/
 
 *.pyc

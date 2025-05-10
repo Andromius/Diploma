@@ -6,10 +6,14 @@
 - Flask, pytorch (torchivision)
 
 ## Spuštění
-- python run.py
-- *(sudo)* docker build -f Dockerfile.dev -t semestralka . 
-- *(sudo)* docker run -it --name test-semetralka -p 6969:6969 semestralka
+- *(sudo)* docker-compose -f docker-compose.dev.yml up (-d pro background)
 
+## Smazání
+- *(sudo)* docker-compose -f docker-compose.dev.yml down --rmi all
+
+## Testy
+- coverage run -m pytest
+- coverage report --ignore-errors --omit="tests/*" 
 
 
 ## *poznamky pod carou*

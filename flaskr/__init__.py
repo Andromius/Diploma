@@ -2,6 +2,8 @@ import os
 
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
+from logging import Logger
+from pipeline.pipeline_builder import PipelineCreator
 
 UPLOAD_FOLDER = 'uploads'  # Directory where uploaded files will be stored
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'} # Allowed image extensions
@@ -32,14 +34,13 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    pipelineCreator = PipelineCreator(app.logger)
+    pipeline = pipelineCreator.construct_voynich("yolo")
     
     @app.route('/upload', methods=['POST'])
     def upload_image():
         """Handles the image upload process."""
+        app.logger.info('Upload image endpoint called')
         if request.method == 'POST':
             # Check if the post request has the file part
             if 'file' not in request.files:
