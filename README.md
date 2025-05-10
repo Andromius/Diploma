@@ -7,7 +7,7 @@
 
 ## Spuštění
 - python run.py
-- *(sudo)* docker build -f Dockerfile.dev -t flask-app:dev . 
+- *(sudo)* docker build -f Dockerfile.dev -t semestralka . 
 - *(sudo)* docker run -it --name test-semetralka -p 6969:6969 semestralka
 
 
