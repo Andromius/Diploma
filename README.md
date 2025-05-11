@@ -12,8 +12,7 @@
 - *(sudo)* docker-compose -f docker-compose.dev.yml down --rmi all
 
 ## Testy
-- coverage run -m pytest
-- coverage report --ignore-errors --omit="tests/*" 
+- ./run_tests.sh
 
 
 ## *poznamky pod carou*

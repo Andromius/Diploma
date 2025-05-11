@@ -3,8 +3,9 @@
 .*
 example/
 README.md
-tests/
 Dockerfile*
 
+docker-compose*
+
 *.pth
-!maskrcnn_resnet50_epoch_10.pth
+!maskrcnn.pth
