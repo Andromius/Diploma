@@ -5,6 +5,8 @@ import torch
 import pytest
 import cv2
 from flaskr import create_app
+
+from filters.model_filter_factory import ModelFilterFactory
 # from flaskr.db import get_db, init_db
 
 # with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
@@ -53,7 +55,13 @@ def test_yolo_image():
         pytest.fail("Test image not found.")
     return image
 
+# @pytest.fixture
+# def yolo_model():
+#     # Load a pre-trained YOLO model for testing
+#     return torch.load(pretrained=True)
+
 @pytest.fixture
-def yolo_model():
-    # Load a pre-trained YOLO model for testing
-    return torch.load(pretrained=True)
+def maskrcnn_model(app):
+    # Load a pre-trained Mask R-CNN model for testing
+    factory = ModelFilterFactory(app.logger)
+    return factory.create_model("maskRCNN")
