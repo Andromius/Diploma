@@ -1,4 +1,5 @@
-from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization, model_selection_filter
+from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization
+from filters.model_filter_factory import ModelFilterFactory
 from pipeline.pipeline import Pipeline
 from logging import Logger
 
@@ -24,7 +25,8 @@ class PipelineBuilder:
         return self
     
     def segmentation_model(self, name):
-        self.pipeline.add_filter(model_selection_filter.ModelSelectionFilter(name=name, logger=self.logger))
+        model_factory = ModelFilterFactory(self.logger)
+        self.pipeline.add_filter(model_factory.create_model(name))
         return self
 
     def build(self):

@@ -19,3 +19,6 @@
 ## *poznamky pod carou*
 - .env moc nefunguje takze ty env variably si musis exportnout sam
 - pripadne docker
+
+## Závislosti
+- pip install -r requirements.txt
