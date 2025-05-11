@@ -5,7 +5,6 @@ fasterrcnn*
 .venv
 rblfw_imgs/
 
-*.pth
 .venv/
 
 *.pyc
