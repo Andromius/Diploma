@@ -75,9 +75,12 @@ def create_app(test_config=None):
                     if image is None:
                         flash(f"Error loading the image: {filename}", 'error')
                         return redirect(url_for('index'))
-                    # You can add further processing here, like displaying the image or storing info in a database
+
                     data = pipeline.execute(image)
-                    result = data["final_images"]
+                    result = [data["image"]]
+                    result = result + data["final_images"]
+                    flash(f"Number of images generated: {len(result)}", 'success')
+                    app.logger.info(f"Number of images generated: {len(result)}")
 
                     base64_images = []
                     for i, img_binary in enumerate(result):
