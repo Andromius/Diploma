@@ -10,9 +10,9 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     ffmpeg
 RUN pip3 install -r requirements.txt
-COPY --exclude=tests/ . .
+COPY . .
 EXPOSE 6969
 RUN rm requirements.txt
 ENV APP_SETTINGS=config.DevelopmentConfig
 ENV DATABASE_URL=postgresql://user:password@db:5433/mydb
-CMD ["python", "run.py"]
+CMD ["sh", "-c", "coverage run -m pytest && coverage report --ignore-errors --omit='tests/*'"]
