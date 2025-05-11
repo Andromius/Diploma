@@ -12,6 +12,8 @@
 - *(sudo)* docker-compose -f docker-compose.dev.yml down --rmi all
 
 ## Testy
+![CI](https://github.com/Andromius/Diploma/actions/workflows/ci.yml/badge.svg)
+
 - ./run_tests.sh
 
 
