@@ -8,6 +8,12 @@ class GaussianBlurFilter(Filter):
         self.kernel_size = kernel_size
         self.sigma = sigma
         
-    def apply(self, image):
+    def apply(self, data: dict):
+        if 'image' not in data:
+            self.logger.error("No image found in data.")
+            raise ValueError("No image found in data.")
+
+        image = data['image']
         self.logger.info(f"Applying Gaussian blur with kernel size {self.kernel_size} and sigma {self.sigma}.")
-        return cv2.GaussianBlur(image, self.kernel_size, self.sigma)
+        data['gaussian_blur'] = cv2.GaussianBlur(image, self.kernel_size, self.sigma)
+        return data

@@ -17,9 +17,9 @@ class TestModelFilter(TestFilter):
         # Assuming the model has a method called 'predict' that takes an image and returns predictions
         print(torch.version.cuda)
         print(torch.cuda.is_available())
-        predictions = maskrcnn_model.apply(test_image)
-        assert predictions is not None, "Model selection filter did not return predictions."
-        assert isinstance(predictions, list), "Predictions should be a list."
+        data = maskrcnn_model.apply(test_image)
+        assert data['segmentation_data'] is not None, "Model selection filter did not return predictions."
+        assert isinstance(data['segmentation_data'], list), "Predictions should be a list."
     
     def test_load_model(self):
         pass

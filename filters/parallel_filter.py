@@ -14,15 +14,14 @@ class ParallelFilter(Filter):
         """
         self.filters.append(filter)
 
-    def apply(self, image):
+    def apply(self, data: dict):
         """
         Applies all filters in parallel to the input image.
         :param image: The image to process.
         :return: The final processed image.
         """
-        # Implement parallel execution of filters here
         mp_pool = mp.Pool(processes=len(self.filters))
-        results = mp_pool.map(lambda f: f.apply(image), self.filters)
+        results = mp_pool.map(lambda f: f.apply(data), self.filters)
         mp_pool.close()
         mp_pool.join()
 

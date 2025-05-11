@@ -5,5 +5,5 @@ class Filter:
         self.name = name
         self.logger = logger
 
-    def apply(self, image):
+    def apply(self, data: dict):
         raise NotImplementedError("Subclasses should implement this method.")

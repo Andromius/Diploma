@@ -17,8 +17,10 @@ class Pipeline:
         :param image: The image to process.
         :return: The final processed image.
         """
-        for filter_function in self.filters:
-            image = filter_function(image)
+        data = {'image': image}
+        filter: Filter
+        for filter in self.filters:
+            data = filter.apply(data)
 
         #TODO - Final filter that returns data
 
