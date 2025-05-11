@@ -1,4 +1,5 @@
 from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization
+from filters.output import output_filter
 from filters.model_filter_factory import ModelFilterFactory
 from pipeline.pipeline import Pipeline
 from logging import Logger
@@ -28,6 +29,10 @@ class PipelineBuilder:
         model_factory = ModelFilterFactory(self.logger)
         self.pipeline.add_filter(model_factory.create_model(name))
         return self
+    
+    def output(self):
+        self.pipeline.add_filter(output_filter.OutputFilter(self.logger))
+        return self
 
     def build(self):
         return self.pipeline
@@ -41,4 +46,4 @@ class PipelineCreator:
         return self.builder.segmentation_model(model_type).build()
     
     def construct_graffiti(self, model_type : str):
-        return self.builder.segmentation_model(model_type).build()
+        return self.builder.segmentation_model(model_type).output().build()

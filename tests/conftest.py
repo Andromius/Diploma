@@ -7,6 +7,7 @@ import cv2
 from flaskr import create_app
 
 from filters.model_filter_factory import ModelFilterFactory
+from pipeline.pipeline_builder import PipelineCreator
 # from flaskr.db import get_db, init_db
 
 # with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
@@ -46,14 +47,24 @@ def test_image():
     image = cv2.imread("tests/test_image.jpg") # TODO: replace with the actual path to test image
     if image is None:
         pytest.fail("Test image not found.")
-    return {'image': image}
+    return image
 
 @pytest.fixture
 def test_yolo_image():
     image = cv2.imread("tests/page_101.png") # TODO: replace with the actual path to test image
     if image is None:
         pytest.fail("Test image not found.")
-    return {'image': image}
+    return image
+
+@pytest.fixture
+def test_image_dict(test_image):
+    # Convert the image to a dictionary format
+    return {'image': test_image}
+
+@pytest.fixture
+def test_yolo_image_dict(test_yolo_image):
+    # Convert the image to a dictionary format
+    return {'image': test_yolo_image}
 
 # @pytest.fixture
 # def yolo_model():
@@ -65,3 +76,9 @@ def maskrcnn_model(app):
     # Load a pre-trained Mask R-CNN model for testing
     factory = ModelFilterFactory(app.logger)
     return factory.create_model("maskRCNN")
+
+@pytest.fixture
+def graffitti_pipeline(app):
+    pipelineCreator = PipelineCreator(app.logger)
+    pipeline = pipelineCreator.construct_graffiti("maskRCNN")
+    return pipeline

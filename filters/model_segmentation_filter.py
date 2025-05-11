@@ -29,15 +29,16 @@ class ModelSegmentationFilter(Filter):
         
         image = data['image']
         try:
+            image_tensor = None
             if isinstance(image, np.ndarray):
                 transform = T.ToTensor()
-                image = transform(image)
+                image_tensor = transform(image)
 
-            image = image.to(self.device)
+            image_tensor = image_tensor.to(self.device)
 
             # Forward pass through the model
             with torch.no_grad():
-                output = self.model(image.unsqueeze(0))
+                output = self.model(image_tensor.unsqueeze(0))
 
             data['segmentation_data'] = output
             print(f"Model Prediction: {output}")

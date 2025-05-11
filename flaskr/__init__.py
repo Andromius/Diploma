@@ -1,9 +1,12 @@
 import os
+import cv2
 
 from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from logging import Logger
 from pipeline.pipeline_builder import PipelineCreator
+from base64 import b64encode
+import numpy as np
 
 UPLOAD_FOLDER = 'uploads'  # Directory where uploaded files will be stored
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'} # Allowed image extensions
@@ -35,7 +38,7 @@ def create_app(test_config=None):
         pass
 
     pipelineCreator = PipelineCreator(app.logger)
-    pipeline = pipelineCreator.construct_voynich("yolo")
+    pipeline = pipelineCreator.construct_graffiti("maskRCNN")
     
     @app.route('/upload', methods=['POST'])
     def upload_image():
@@ -67,8 +70,38 @@ def create_app(test_config=None):
                 try:
                     file.save(file_path)
                     flash(f'Image "{filename}" uploaded successfully!', 'success')
+
+                    image = cv2.imread(file_path)
+                    if image is None:
+                        flash(f"Error loading the image: {filename}", 'error')
+                        return redirect(url_for('index'))
                     # You can add further processing here, like displaying the image or storing info in a database
-                    return redirect(url_for('index')) # Redirect back to the index page after successful upload
+                    data = pipeline.execute(image)
+                    result = data["final_images"]
+
+                    base64_images = []
+                    for i, img_binary in enumerate(result):
+                        try:
+                            # If img_binary is already a numpy array
+                            if isinstance(img_binary, np.ndarray):
+                                # Convert numpy array to binary jpg
+                                _, buffer = cv2.imencode('.jpg', img_binary)
+                                img_binary = buffer.tobytes()
+                            
+                            # Convert binary to base64
+                            img_base64 = b64encode(img_binary).decode('utf-8')
+                            
+                            # Determine content type (assuming JPEG for simplicity)
+                            content_type = 'image/jpeg'
+                            
+                            # Create the data URL
+                            data_url = f'data:{content_type};base64,{img_base64}'
+                            base64_images.append(data_url)
+                        except Exception as e:
+                            app.logger.error(f"Error converting image {i}: {str(e)}")
+                            # Continue with other images even if one fails
+                    
+                    return render_template("results.html", user_images=base64_images)
                 except Exception as e:
                     flash(f'An error occurred while saving the file: {e}', 'error')
                     return redirect(url_for('index'))

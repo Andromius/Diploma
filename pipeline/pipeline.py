@@ -27,4 +27,4 @@ class Pipeline:
         #TODO - Save data to DB
 
         #TODO - Return data
-        return image
+        return data
