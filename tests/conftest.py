@@ -46,14 +46,14 @@ def test_image():
     image = cv2.imread("tests/test_image.jpg") # TODO: replace with the actual path to test image
     if image is None:
         pytest.fail("Test image not found.")
-    return image
+    return {'image': image}
 
 @pytest.fixture
 def test_yolo_image():
     image = cv2.imread("tests/page_101.png") # TODO: replace with the actual path to test image
     if image is None:
         pytest.fail("Test image not found.")
-    return image
+    return {'image': image}
 
 # @pytest.fixture
 # def yolo_model():

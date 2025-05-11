@@ -19,11 +19,15 @@ class ModelSegmentationFilter(Filter):
     def load_model(self):
         raise NotImplementedError("Subclasses should implement this method.")
     
-    def apply(self, image):
+    def apply(self, data):
         if self.model is None:
             print("Model not loaded. Cannot apply filter.")
             return None
+        if 'image' not in data:
+            print("No image found in data.")
+            return None
         
+        image = data['image']
         try:
             if isinstance(image, np.ndarray):
                 transform = T.ToTensor()
@@ -35,8 +39,9 @@ class ModelSegmentationFilter(Filter):
             with torch.no_grad():
                 output = self.model(image.unsqueeze(0))
 
+            data['segmentation_data'] = output
             print(f"Model Prediction: {output}")
-            return output
+            return data
         
         except Exception as e:
             print(f"Error during model application: {e}")
