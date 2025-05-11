@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Uploader</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Using Inter font */
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            /* White container background */
+            padding: 30px 40px;
+            border-radius: 12px;
+            /* Rounded corners */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            /* Soft shadow */
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1a73e8;
+            /* Blue heading */
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #5f6368;
+            /* Dark gray label */
+            text-align: left;
+        }
+
+        input[type="file"] {
+            display: block;
+            width: calc(100% - 24px);
+            /* Adjust width to account for padding */
+            padding: 12px;
+            border: 1px solid #dadce0;
+            /* Light gray border */
+            border-radius: 8px;
+            /* Rounded corners for input */
+            background-color: #f8f9fa;
+            /* Light background for input */
+            font-size: 16px;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        input[type="file"]:focus {
+            border-color: #1a73e8;
+            /* Blue border on focus */
+            outline: none;
+        }
+
+        .submit-btn {
+            background-color: #1a73e8;
+            /* Blue submit button */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            /* Rounded corners for button */
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-btn:hover {
+            background-color: #1558b0;
+            /* Darker blue on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .messages li {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            /* Rounded corners for messages */
+            font-size: 15px;
+        }
+
+        .messages .success {
+            background-color: #e6f4ea;
+            /* Light green for success */
+            color: #1e8e3e;
+            /* Dark green text */
+            border: 1px solid #a1d9ae;
+        }
+
+        .messages .error {
+            background-color: #fce8e6;
+            /* Light red for error */
+            color: #d93025;
+            /* Dark red text */
+            border: 1px solid #f7b2ad;
+        }
+
+        .messages .warning {
+            background-color: #fff0e0;
+            /* Light orange for warning */
+            color: #e8710a;
+            /* Dark orange text */
+            border: 1px solid #ffd5a9;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            input[type="file"],
+            .submit-btn {
+                font-size: 15px;
+            }
+        }
+
+
+select {
+    width: 100%;
+    padding: 12px;
+    padding-right: 40px; /* prostor pro šipku */
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    font-size: 16px;
+    appearance: none; /* skryje výchozí šipku */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20fill='%235f6368'%20class='bi%20bi-caret-down-fill'%20viewBox='0%200%2016%2016'%3E%3Cpath%20d='M7.247%2011.14l-4.796-5.481c-.566-.647-.106-1.659.753-1.659h9.592c.86%200%201.32%201.012.753%201.659l-4.796%205.48a1%201%200%200%201-1.506%200z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    transition: border-color 0.2s ease-in-out;
+}
+
+select:focus {
+    border-color: #1a73e8;
+    outline: none;
+}
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Upload an Image</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="messages">
+            {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('upload_image') }}" enctype="multipart/form-data" class="upload-form">
+            <div class="form-group">
+                <label for="category">Select category:</label>
+                <select id="category" name="category" required>
+                    <option value="grafitti">Grafitti</option>
+                    <option value="voynich">Voynich</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="file">Choose an image:</label>
+                <input type="file" id="file" name="file" accept="image/png, image/jpeg, image/gif" required>
+            </div>
+            <button type="submit" class="submit-btn">Upload Image</button>
+        </form>
+    </div>
+</body>
+
+</html>
