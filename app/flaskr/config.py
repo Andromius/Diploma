@@ -8,10 +8,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
     DATABASE = os.environ['DATABASE_URL']
-<<<<<<< HEAD:app/flaskr/config.py
     RESOURCES_PATH = "resources"
-=======
->>>>>>> d71a316 (Various updates):flaskr/config.py
 
 
 class ProductionConfig(Config):
