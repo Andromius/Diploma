@@ -2,7 +2,11 @@
 **/instance/
 .*
 
+<<<<<<< HEAD
 uploads/
+=======
+
+>>>>>>> e3b1e30 (Restructuring and test modification)
 
 Dockerfile*
 

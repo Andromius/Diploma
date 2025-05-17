@@ -25,6 +25,14 @@ def create_app(test_config=None):
     #     SECRET_KEY='dev',
     #     DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     # )
+<<<<<<< HEAD
+=======
+
+    settings = os.environ['APP_SETTINGS']
+    # load the instance config, if it exists, when not testing
+    app.config.from_object(f'flaskr.{settings}')
+
+>>>>>>> e3b1e30 (Restructuring and test modification)
 
     settings = os.environ['APP_SETTINGS']
     # load the instance config, if it exists, when not testing
@@ -36,6 +44,12 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+<<<<<<< HEAD
+=======
+
+    pipelineCreator = PipelineCreator(app.logger, app.config['RESOURCES_PATH'])
+    pipeline = pipelineCreator.construct_graffiti("maskRCNN")
+>>>>>>> e3b1e30 (Restructuring and test modification)
     
     @app.route('/upload', methods=['POST'])
     def upload_image():

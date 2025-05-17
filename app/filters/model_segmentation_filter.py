@@ -5,14 +5,18 @@ from torchvision import transforms as T
 import numpy as np
 
 class ModelSegmentationFilter(Filter):
+<<<<<<< HEAD
     def __init__(self, name: str, model_file : str = "", logger: Logger = None):
+=======
+    def __init__(self, name: str, model_file : str, logger: Logger, resources_path: str):
+>>>>>>> e3b1e30 (Restructuring and test modification)
         super().__init__(name, logger)
         if model_file is None:
             raise ValueError("Model file not set-up")
         
         self.name = name
         self.logger = logger
-        self.resources_dir = f"resources/models/{model_file}"
+        self.resources_dir = f"{resources_path}/models/{model_file}"
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model = None
 

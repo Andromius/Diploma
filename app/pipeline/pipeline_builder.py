@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization, morphology, edge_separation, thresholding
 from filters.output import output_filter
 from filters.analysis import similarity_filter
@@ -11,6 +12,19 @@ class PipelineBuilder:
         self.resources_path = resources_path
         self.pipeline = Pipeline()
         self.logger = logger
+=======
+from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization
+from filters.output import output_filter
+from filters.model_filter_factory import ModelFilterFactory
+from pipeline.pipeline import Pipeline
+from logging import Logger
+
+class PipelineBuilder:
+    def __init__(self, logger, resources_path):
+        self.pipeline = Pipeline()
+        self.logger = logger
+        self.resources_path = resources_path
+>>>>>>> e3b1e30 (Restructuring and test modification)
 
     def contouring(self):
         self.pipeline.add_filter(contouring.ContouringFilter(self.logger))
@@ -29,13 +43,18 @@ class PipelineBuilder:
         return self
     
     def segmentation_model(self, name):
+<<<<<<< HEAD
         model_factory = ModelFilterFactory(self.logger)
+=======
+        model_factory = ModelFilterFactory(self.logger, self.resources_path)
+>>>>>>> e3b1e30 (Restructuring and test modification)
         self.pipeline.add_filter(model_factory.create_model(name))
         return self
     
     def output(self):
         self.pipeline.add_filter(output_filter.OutputFilter(self.logger))
         return self
+<<<<<<< HEAD
     
     def extract_feature_vector(self):
         self.pipeline.add_filter(ModelFilterFactory(self.logger).create_model("feature_vector_extractor"))
@@ -56,20 +75,29 @@ class PipelineBuilder:
     def thresholding(self, threshold=0.8):
         self.pipeline.add_filter(thresholding.ThresholdingFilter(self.logger, threshold))
         return self
+=======
+>>>>>>> e3b1e30 (Restructuring and test modification)
 
     def build(self):
         return self.pipeline
 
 class PipelineCreator:
+<<<<<<< HEAD
     def __init__(self, logger : Logger, resources_path: str, connection: psycopg2.extensions.connection):
         self.builder = PipelineBuilder(logger, resources_path)
         self.logger = logger
         self.connection = connection
+=======
+    def __init__(self, logger : Logger, resources_path: str):
+        self.builder = PipelineBuilder(logger, resources_path)
+        self.logger = logger
+>>>>>>> e3b1e30 (Restructuring and test modification)
         
     def construct_voynich(self, model_type : str):
         return self.builder.segmentation_model(model_type).build()
     
     def construct_graffiti(self, model_type : str):
+<<<<<<< HEAD
         return self.builder.segmentation_model(model_type)\
                             .gaussian_blur()\
                             .thresholding()\
@@ -78,3 +106,6 @@ class PipelineCreator:
                             .separate_lines()\
                             .extract_feature_vector()\
                             .build()
+=======
+        return self.builder.segmentation_model(model_type).output().build()
+>>>>>>> e3b1e30 (Restructuring and test modification)

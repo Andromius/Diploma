@@ -6,8 +6,8 @@ import torch
 
 
 class FastRCNNSegmentationFilter(ModelSegmentationFilter):
-    def __init__(self, name : str, logger : Logger, num_classes : int = 2):
-        super().__init__(name, logger)
+    def __init__(self, name: str, model_file: str, logger: Logger, resources_path: str, num_classes: int = 2):
+        super().__init__(name, logger, resources_path)
         self.num_classes = num_classes
         self.model = self.load_model()
 

@@ -1,4 +1,4 @@
-from pipeline.pipeline import Pipeline
+from app.pipeline.pipeline import Pipeline
 
 def test_graffitti_pipeline(test_image, graffitti_pipeline : Pipeline):
     data = graffitti_pipeline.execute(test_image)

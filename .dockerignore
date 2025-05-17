@@ -6,6 +6,3 @@ README.md
 Dockerfile*
 
 docker-compose*
-
-*.pth
-!maskrcnn.pth

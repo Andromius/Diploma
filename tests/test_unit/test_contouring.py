@@ -1,4 +1,4 @@
-from filters.preprocessing.contouring import ContouringFilter  
+from app.filters.preprocessing.contouring import ContouringFilter  
 
 
 def test_contours_detection(test_image_dict,app):

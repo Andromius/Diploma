@@ -1,4 +1,5 @@
-from flaskr import create_app # replace with your actual package name
+from flaskr import create_app
+
 
 app = create_app()
 

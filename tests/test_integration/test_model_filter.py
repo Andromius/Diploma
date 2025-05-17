@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from .test_filter import TestFilter
-from filters.preprocessing.maskrcnn_segmentation_filter import MaskRCNNSegmentationFilter
+from app.filters.preprocessing.maskrcnn_segmentation_filter import MaskRCNNSegmentationFilter
 import torch
 
 class TestModelFilter(TestFilter):
