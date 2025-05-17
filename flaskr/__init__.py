@@ -25,8 +25,9 @@ def create_app(test_config=None):
     #     DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     # )
     if test_config is None:
+        settings = os.environ['APP_SETTINGS']
         # load the instance config, if it exists, when not testing
-        app.config.from_object(f'flaskr.{os.environ['APP_SETTINGS']}')
+        app.config.from_object(f'flaskr.{settings}')
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
