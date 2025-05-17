@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      APP_SETTINGS: config.DevelopmentConfig
+      APP_SETTINGS: config.TestingConfig
+      PYTHONPATH: "/testing/app:/testing:${PYTHONPATH}"
 
     steps:
     - uses: actions/checkout@v3
