@@ -1,5 +1,6 @@
+# syntax=docker/dockerfile:1.7-labs
 FROM pytorch/pytorch:2.7.0-cuda12.8-cudnn9-runtime
-WORKDIR /flaskr
+WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 RUN apt-get update && apt-get install -y \
