@@ -1,38 +1,38 @@
 name: CI
-
 on:
   push:
     branches: [ development ]
   pull_request:
     branches: [ development ]
-    
 jobs:
-  
   test:
     runs-on: ubuntu-latest
     env:
       APP_SETTINGS: config.TestingConfig
-      PYTHONPATH: "${GITHUB_WORKSPACE}/app:${GITHUB_WORKSPACE}:${PYTHONPATH}"
-   
+      PYTHONPATH: ".:./app:${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}/app:${PYTHONPATH}"
     steps:
     - uses: actions/checkout@v3
       with:
         lfs: true
-    
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: 3.13
-    
     - name: Install system dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y --no-install-recommends build-essential \
             libgl1 libglib2.0-0 libsm6 libxext6 ffmpeg
-    
     - name: Install Python dependencies
       run: pip install -r requirements.txt
-   
+    - name: Debug directory structure and import paths
+      run: |
+        echo "Current directory: $(pwd)"
+        echo "Directory structure:"
+        find . -type d -not -path "*/\.*" | sort
+        echo "PYTHONPATH: $PYTHONPATH"
+        echo "Checking for pipeline module:"
+        ls -la app/
     - name: Run tests with coverage
       run: |
         coverage run -m pytest
