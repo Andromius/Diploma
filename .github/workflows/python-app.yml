@@ -12,7 +12,7 @@ jobs:
 
     env:
       APP_SETTINGS: config.TestingConfig
-      PYTHONPATH: "/testing/app:/testing:${PYTHONPATH}"
+      PYTHONPATH: "/app:/:${PYTHONPATH}"
 
     steps:
     - uses: actions/checkout@v3
