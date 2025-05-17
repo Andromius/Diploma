@@ -24,13 +24,11 @@ def create_app(test_config=None):
     #     SECRET_KEY='dev',
     #     DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     # )
-    if test_config is None:
-        settings = os.environ['APP_SETTINGS']
-        # load the instance config, if it exists, when not testing
-        app.config.from_object(f'flaskr.{settings}')
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
+
+    settings = os.environ['APP_SETTINGS']
+    # load the instance config, if it exists, when not testing
+    app.config.from_object(f'flaskr.{settings}')
+
 
     # ensure the instance folder exists
     try:
@@ -38,7 +36,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    pipelineCreator = PipelineCreator(app.logger)
+    pipelineCreator = PipelineCreator(app.logger, app.config['RESOURCES_PATH'])
     pipeline = pipelineCreator.construct_graffiti("maskRCNN")
     
     @app.route('/upload', methods=['POST'])

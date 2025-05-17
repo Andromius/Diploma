@@ -1,4 +1,4 @@
-from filters.preprocessing.grayscaling import GrayscaleFilter
+from app.filters.preprocessing.grayscaling import GrayscaleFilter
 
 def test_grayscaling_conversion(test_image_dict,app):
     filter = GrayscaleFilter(app.logger)

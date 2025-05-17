@@ -5,9 +5,10 @@ from pipeline.pipeline import Pipeline
 from logging import Logger
 
 class PipelineBuilder:
-    def __init__(self, logger):
+    def __init__(self, logger, resources_path):
         self.pipeline = Pipeline()
         self.logger = logger
+        self.resources_path = resources_path
 
     def contouring(self):
         self.pipeline.add_filter(contouring.ContouringFilter(self.logger))
@@ -26,7 +27,7 @@ class PipelineBuilder:
         return self
     
     def segmentation_model(self, name):
-        model_factory = ModelFilterFactory(self.logger)
+        model_factory = ModelFilterFactory(self.logger, self.resources_path)
         self.pipeline.add_filter(model_factory.create_model(name))
         return self
     
@@ -38,8 +39,8 @@ class PipelineBuilder:
         return self.pipeline
 
 class PipelineCreator:
-    def __init__(self, logger : Logger):
-        self.builder = PipelineBuilder(logger)
+    def __init__(self, logger : Logger, resources_path: str):
+        self.builder = PipelineBuilder(logger, resources_path)
         self.logger = logger
         
     def construct_voynich(self, model_type : str):

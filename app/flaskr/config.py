@@ -8,6 +8,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
     DATABASE = os.environ['DATABASE_URL']
+    RESOURCES_PATH = "resources"
 
 
 class ProductionConfig(Config):
@@ -29,3 +30,4 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    RESOURCES_PATH = "app/resources"

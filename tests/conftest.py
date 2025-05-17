@@ -1,13 +1,15 @@
 import os
 import tempfile
+import sys
 
 import torch
 import pytest
 import cv2
-from flaskr import create_app
 
-from filters.model_filter_factory import ModelFilterFactory
-from pipeline.pipeline_builder import PipelineCreator
+from app.flaskr import create_app
+
+from app.filters.model_filter_factory import ModelFilterFactory
+from app.pipeline.pipeline_builder import PipelineCreator
 # from flaskr.db import get_db, init_db
 
 # with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
@@ -74,11 +76,11 @@ def test_yolo_image_dict(test_yolo_image):
 @pytest.fixture
 def maskrcnn_model(app):
     # Load a pre-trained Mask R-CNN model for testing
-    factory = ModelFilterFactory(app.logger)
+    factory = ModelFilterFactory(app.logger, app.config['RESOURCES_PATH'])
     return factory.create_model("maskRCNN")
 
 @pytest.fixture
 def graffitti_pipeline(app):
-    pipelineCreator = PipelineCreator(app.logger)
+    pipelineCreator = PipelineCreator(app.logger, app.config['RESOURCES_PATH'])
     pipeline = pipelineCreator.construct_graffiti("maskRCNN")
     return pipeline
