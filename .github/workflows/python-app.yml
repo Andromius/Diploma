@@ -10,6 +10,7 @@ jobs:
     env:
       APP_SETTINGS: config.TestingConfig
       PYTHONPATH: ".:./app:${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}/app:${PYTHONPATH}"
+      DATABASE_URL: ""
     steps:
     - uses: actions/checkout@v3
       with:
@@ -25,14 +26,7 @@ jobs:
             libgl1 libglib2.0-0 libsm6 libxext6 ffmpeg
     - name: Install Python dependencies
       run: pip install -r requirements.txt
-    - name: Debug directory structure and import paths
-      run: |
-        echo "Current directory: $(pwd)"
-        echo "Directory structure:"
-        find . -type d -not -path "*/\.*" | sort
-        echo "PYTHONPATH: $PYTHONPATH"
-        echo "Checking for pipeline module:"
-        ls -la app/
+      
     - name: Run tests with coverage
       run: |
         coverage run -m pytest
