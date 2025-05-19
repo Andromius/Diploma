@@ -1,4 +1,4 @@
-from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization
+from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization, segment_threshold_filter
 from filters.output import output_filter
 from filters.model_filter_factory import ModelFilterFactory
 from pipeline.pipeline import Pipeline
@@ -34,6 +34,10 @@ class PipelineBuilder:
     def output(self):
         self.pipeline.add_filter(output_filter.OutputFilter(self.logger))
         return self
+    
+    def segment_threshold(self, threshold):
+        self.pipeline.add_filter(segment_threshold_filter.SegmentThresholdFilter(self.logger, threshold))
+        return self
 
     def build(self):
         return self.pipeline
@@ -46,5 +50,5 @@ class PipelineCreator:
     def construct_voynich(self, model_type : str):
         return self.builder.segmentation_model(model_type).build()
     
-    def construct_graffiti(self, model_type : str):
-        return self.builder.segmentation_model(model_type).output().build()
+    def construct_graffiti(self, model_type : str, threshold: int = 0.8):
+        return self.builder.segmentation_model(model_type).segment_threshold(threshold).output().build()
