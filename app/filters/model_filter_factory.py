@@ -16,12 +16,8 @@ class ModelFilterFactory:
         elif name == "maskRCNN":
             return MaskRCNNSegmentationFilter(name, self.model_paths[name], self.logger, self.resources_path)
         elif name == "fastRCNN":
-<<<<<<< HEAD
             return FastRCNNSegmentationFilter(name, self.model_paths[name], self.logger)
         elif name == "feature_vector_extractor":
             return FeatureVectorExtractor(name, logger=self.logger)
-=======
-            return FastRCNNSegmentationFilter(name, self.model_paths[name], self.logger, self.resources_path)
->>>>>>> e3b1e30 (Restructuring and test modification)
         else:
             raise ValueError(f"Model {name} not supported.")
