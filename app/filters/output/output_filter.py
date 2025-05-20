@@ -9,9 +9,9 @@ class OutputFilter(Filter):
     def apply(self, data : dict):
         prediction = data["segmentation_data"]
         image = data["image"]
-        masks = prediction['masks'].cpu().numpy()  # Get predicted masks
-        labels = prediction['labels'].cpu().numpy()  # Get predicted labels
-        scores = prediction['scores'].cpu().numpy()  # Get predicted scores
+        masks = prediction[0]['masks'].cpu().numpy()  # Get predicted masks
+        labels = prediction[0]['labels'].cpu().numpy()  # Get predicted labels
+        scores = prediction[0]['scores'].cpu().numpy()  # Get predicted scores
 
         arr = list(zip(masks, labels, scores))
 
