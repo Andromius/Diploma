@@ -24,12 +24,12 @@ class SegmentThresholdFilter(Filter):
         filtered_labels = labels[keep_mask]
         filtered_masks = masks[keep_mask]
 
-        data['segmentation_data'] = {
+        data['segmentation_data'] = [{
             'scores': filtered_scores,
             'boxes': filtered_boxes,
             'labels': filtered_labels,
             'masks': filtered_masks
-        }
+        }]
 
         return data
 
