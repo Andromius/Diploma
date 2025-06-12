@@ -22,6 +22,7 @@ class MaskRCNNSegmentationFilter(ModelSegmentationFilter):
         hidden_layer = 256
         model.roi_heads.mask_predictor = MaskRCNNPredictor(in_features_mask, hidden_layer, self.num_classes)
 
+        self.logger.info(f"Printing mask_predictor: {model.roi_heads.mask_predictor}")
         model.load_state_dict(torch.load(self.resources_dir, map_location=self.device))
         model.to(self.device)
         model.eval()

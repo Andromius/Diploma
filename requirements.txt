@@ -11,10 +11,12 @@ fonttools==4.57.0
 fsspec==2025.3.2
 gitdb==4.0.12
 GitPython==3.1.44
+hdbscan==0.8.40
 idna==3.10
 iniconfig==2.1.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
+joblib==1.5.1
 kiwisolver==1.4.8
 MarkupSafe==3.0.2
 matplotlib==3.10.3
@@ -41,6 +43,7 @@ pandas==2.2.3
 pillow==11.2.1
 pluggy==1.5.0
 psutil==7.0.0
+psycopg2-binary==2.9.10
 py-cpuinfo==9.0.0
 pycocotools==2.0.8
 pyparsing==3.2.3
@@ -49,12 +52,14 @@ python-dateutil==2.9.0.post0
 pytz==2025.2
 PyYAML==6.0.2
 requests==2.32.3
+scikit-learn==1.6.1
 scipy==1.15.3
 seaborn==0.13.2
 setuptools==80.4.0
 six==1.17.0
 smmap==5.0.2
 sympy==1.14.0
+threadpoolctl==3.6.0
 torch==2.7.0
 torchvision==0.22.0
 tqdm==4.67.1

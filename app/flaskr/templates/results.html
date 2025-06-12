@@ -69,12 +69,46 @@
         .download-btn:hover {
             background-color: #45a049;
         }
+        /* Styles for dropdown */
+        .dropdown-container {
+            margin-top: 10px;
+        }
+        .dropdown-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .dropdown-btn:hover {
+            background-color: #0056b3;
+        }
+        .similar-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Smaller grid for similar images */
+            grid-gap: 10px;
+            margin-top: 10px;
+            max-height: 0; /* Hidden by default */
+            overflow: hidden;
+            /* Removed transition for instant appearance/disappearance */
+        }
+        .similar-images-grid.active {
+            max-height: none; /* Allows content to take natural height */
+            overflow: visible; /* Ensures no content is clipped */
+        }
+        .similar-image-item img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
     <h1>Image Processing App</h1>
     
-    <!-- Flash Messages -->
     {% if get_flashed_messages() %}
     <div class="flash-messages">
         {% for category, message in get_flashed_messages(with_categories=true) %}
@@ -83,7 +117,6 @@
     </div>
     {% endif %}
     
-    <!-- Upload Form -->
     <div class="upload-container">
         <h2>Upload Image</h2>
         <form action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data">
@@ -92,30 +125,51 @@
         </form>
     </div>
     
-    <!-- Results Section -->
     {% if user_images %}
     <div class="results-container">
         <h2>Processed Images</h2>
         <div class="image-grid">
-            {% if user_images is string %}
-                <!-- If only a single image was passed (unlikely with your implementation) -->
+            {% for image_index in range(user_images|length) %}
                 <div class="image-item">
-                    <img src="{{ user_images }}" alt="Processed Image">
-                </div>
-            {% else %}
-                <!-- For multiple base64 encoded images -->
-                {% for image in user_images %}
-                    <div class="image-item">
-                        <img src="{{ image }}" alt="Processed Image {{ loop.index }}">
-                        <!-- Optional: Add a download button -->
-                        <div style="margin-top: 10px;">
-                            <a href="{{ image }}" download="processed_image_{{ loop.index }}.jpg" class="download-btn">Download</a>
-                        </div>
+                    <img src="{{ user_images[image_index] }}" alt="Processed Image {{ image_index + 1 }}">
+                    <div style="margin-top: 10px;">
+                        {% if image_index == 0 %}
+                            <p>Colorfulness --- (Original)</p>
+                        {% else %}
+                            <p>Colorfulness {{ colorfulnesses[image_index - 1] }}</p> {# colorfulnesses index matches processed images, skipping the original #}
+                            <div class="dropdown-container">
+                                <button class="dropdown-btn" onclick="toggleSimilarImages(this, {{ image_index - 1 }})">
+                                    Show Similar Images
+                                </button>
+                                <div class="similar-images-grid" id="similar-images-{{ image_index - 1 }}">
+                                    {# Iterate through similar images for this specific processed image #}
+                                    {% for similar_img in similar_images[image_index - 1] %}
+                                        <div class="similar-image-item">
+                                            <img src="{{ similar_img }}" alt="Similar Image">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <a href="{{ user_images[image_index] }}" download="processed_image_{{ image_index + 1 }}.jpg" class="download-btn">Download</a>
                     </div>
-                {% endfor %}
-            {% endif %}
+                </div>
+            {% endfor %}
         </div>
     </div>
     {% endif %}
+
+    <script>
+        function toggleSimilarImages(button, index) {
+            const similarImagesGrid = document.getElementById(`similar-images-${index}`);
+            similarImagesGrid.classList.toggle('active');
+
+            if (similarImagesGrid.classList.contains('active')) {
+                button.textContent = 'Hide Similar Images';
+            } else {
+                button.textContent = 'Show Similar Images';
+            }
+        }
+    </script>
 </body>
 </html>

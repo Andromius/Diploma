@@ -29,6 +29,12 @@ class ModelSegmentationFilter(Filter):
         
         image = data['image']
         try:
+            def get_mask_features_hook(module, input, output):
+                # 'output' here is the tensor of features from mask_fcn4
+                data['mask_features'] = output
+            
+            self.logger.info(f"Applying {self.name} model segmentation filter.")
+            hook = self.model.roi_heads.mask_predictor.conv5_mask.register_forward_hook(get_mask_features_hook)
             image_tensor = None
             if isinstance(image, np.ndarray):
                 transform = T.ToTensor()
@@ -39,9 +45,10 @@ class ModelSegmentationFilter(Filter):
             # Forward pass through the model
             with torch.no_grad():
                 output = self.model(image_tensor.unsqueeze(0))
+            hook.remove()  # Remove the hook after use
 
-            data['segmentation_data'] = output
-            print(f"Model Prediction: {output}")
+            data['segmentation_data'] = output.cpu().numpy() if isinstance(output, torch.Tensor) else output
+            torch.cuda.empty_cache()  # Clear GPU memory
             return data
         
         except Exception as e:

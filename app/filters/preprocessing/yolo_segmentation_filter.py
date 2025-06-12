@@ -10,3 +10,4 @@ class YoloSegmentationFilter(ModelSegmentationFilter):
     def load_model(self):
         pass
         #return torch.hub.load('ultralytics/yolov5', 'yolov5s')
+
