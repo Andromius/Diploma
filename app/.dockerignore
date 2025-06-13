@@ -1,0 +1,9 @@
+**/__pycache__/
+**/instance/
+.*
+
+uploads/
+
+Dockerfile*
+
+docker-compose*
