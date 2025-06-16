@@ -36,7 +36,7 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    
+
     @app.route('/upload', methods=['POST'])
     def upload_image():
         """Handles the image upload process."""
@@ -57,13 +57,13 @@ def create_app(test_config=None):
 
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename) # Sanitize the filename
-                
+
                 # Create the uploads directory if it doesn't exist
                 if not os.path.exists(app.config['UPLOAD_FOLDER']):
                     os.makedirs(app.config['UPLOAD_FOLDER'])
-                    
+
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                
+
                 try:
                     file.save(file_path)
                     flash(f'Image "{filename}" uploaded successfully!', 'success')
@@ -78,23 +78,30 @@ def create_app(test_config=None):
                     pipeline = pipelineCreator.construct_graffiti("maskRCNN")
 
                     data = pipeline.execute(image)
-                    result = [data["image"]] + data["final_images"]
+                    result = [data["image"]] + data["final_images"] + data["gradients"] + data["magnitudes"] + data["directions"]
                     flash(f"Number of images generated: {len(result)}", 'success')
                     app.logger.info(f"Number of images generated: {len(result)}")
 
-                    for i, (cutout, edges, contours) in enumerate(zip(data["final_images"], data.get("cutout_edges", []), data.get("cutout_contours", []))):
-                        # Edges (already grayscale)
-                        edge_img = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)  # Convert to 3-channel for consistency
-                        result.append(edge_img)
+                    # for i, (cutout, edges, contours, gradients) in enumerate(zip(data["final_images"], data.get("cutout_edges", []), data.get("cutout_contours", []), data.get("gradients", []))):
+                    #     # Edges (already grayscale)
+                    #     edge_img = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)  # Convert to 3-channel for consistency
+                    #     result.append(edge_img)
 
-                        # Contours
-                        if cutout.shape[2] == 4:
-                            cutout_rgb = cutout[..., :3]
-                        else:
-                            cutout_rgb = cutout
-                        contour_img = cutout_rgb.copy()
-                        cv2.drawContours(contour_img, contours, -1, (0,255,0), 2)
-                        result.append(contour_img)
+                    #     # # Contours
+                    #     # if cutout.shape[2] == 4:
+                    #     #     cutout_rgb = cutout[..., :3]
+                    #     # else:
+                    #     #     cutout_rgb = cutout
+                    #     contour_img = cutout.copy()
+                    #     for i, cnt in enumerate(contours):
+                    #         if data["hierarchy"][0][i][3] == -1:
+                    #             # Outer contour — bright green
+                    #             cv2.drawContours(contour_img, contours, i, (0, 255, 0), thickness=2)
+                    #         else:
+                    #             # Inner contour — bright red
+                    #             cv2.drawContours(contour_img, contours, i, (0, 0, 255), thickness=2)
+
+                    #     result.append(contour_img)
 
                     db.close_db_connection(connection)
                     base64_images = []
@@ -105,20 +112,20 @@ def create_app(test_config=None):
                                 # Convert numpy array to binary jpg
                                 _, buffer = cv2.imencode('.jpg', img_binary)
                                 img_binary = buffer.tobytes()
-                            
+
                             # Convert binary to base64
                             img_base64 = b64encode(img_binary).decode('utf-8')
-                            
+
                             # Determine content type (assuming JPEG for simplicity)
                             content_type = 'image/jpeg'
-                            
+
                             # Create the data URL
                             data_url = f'data:{content_type};base64,{img_base64}'
                             base64_images.append(data_url)
                         except Exception as e:
                             app.logger.error(f"Error converting image {i}: {str(e)}")
                             # Continue with other images even if one fails
-                    
+
                     return render_template("results.html", user_images=base64_images)
                 except Exception as e:
                     flash(f'An error occurred while saving the file: {e}', 'error')

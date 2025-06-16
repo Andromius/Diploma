@@ -5,67 +5,25 @@ import torch
 import cv2
 
 class MorphologicalOperationsFilter(Filter):
-    def __init__(self, logger: Logger, kernel_size=(10, 10), iterations=5):
+    def __init__(self, logger: Logger, kernel_size=(3, 3)):
         super().__init__(name=__name__, logger=logger)
         self.kernel_size = kernel_size
-        self.iterations = iterations
 
     def apply(self, data: dict):
-        """
-        Applies morphological operations to the segmentation masks in the input data.
-
-        Args:
-            data (dict): A dictionary containing 'segmentation_data'.
-                   'segmentation_data' is expected to be a list, where the first element
-                   contains the mask.
-
-        Returns:
-            dict: The modified data dictionary, with cleaned masks in the 'segmentation_data'.
-                    The 'segmentation_data'  will be updated
-        Raises:
-            ValueError: If 'segmentation_data' is missing or has the wrong type.
-        """
-        if 'segmentation_data' not in data:
-            raise ValueError("No segmentation data found in data.")
-        if not isinstance(data['segmentation_data'], list):
-            raise ValueError("Segmentation data is not in the expected format (expected list).")
-
-        prediction = data["segmentation_data"][0]  # Get the first prediction
-        masks = prediction['masks'].cpu().numpy()  # Get predicted masks as numpy array
-        original_dtype = prediction['masks'].dtype  # Get the original data type
-        original_device = prediction['masks'].device  # Get the original device
-        original_shape = prediction['masks'].shape # Get the original shape
-
+        if 'final_images' not in data or not isinstance(data['final_images'], list):
+            self.logger.error("No final images found in data or final_images is not a list.")
 
         # Define the structuring element (kernel) for morphological operations.
         kernel = np.ones(self.kernel_size, np.uint8)
 
-        cleaned_masks = []
-
-        # Iterate through each detected object
-        for mask in masks:
-            if mask.ndim == 3 and mask.shape[0] == 1:
-                mask = mask[0, :, :]
-
-            if mask.max() <= 1.0:
-                mask = (mask * 255).astype(np.uint8)
-            
+        cleaned_cutouts = []
+        for cutout in data['final_images']:
             # Erosion + dilatation to remove noise
-            mask_open = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+            cutout_open = cv2.morphologyEx(cutout, cv2.MORPH_OPEN, kernel)
 
             # Dilatation + erosion to fill small holes
-            mask_close = cv2.morphologyEx(mask_open, cv2.MORPH_CLOSE, kernel)
+            cutout_close = cv2.morphologyEx(cutout_open, cv2.MORPH_CLOSE, kernel)
+            cleaned_cutouts.append(cutout_close)
 
-            cleaned_masks.append(mask_close)
-
-        # Update the masks in the prediction data with the cleaned masks, preserving original shape
-        cleaned_masks_array = np.array(cleaned_masks)
-        if len(original_shape) == 4:
-            cleaned_masks_array = cleaned_masks_array.reshape(original_shape[0], 1, original_shape[2], original_shape[3])
-        elif len(original_shape) == 3:
-             cleaned_masks_array = cleaned_masks_array.reshape(1, original_shape[1], original_shape[2])
-
-        prediction['masks'] = torch.from_numpy(cleaned_masks_array).to(original_device).to(original_dtype)
-        data['segmentation_data'][0] = prediction  # update the first element of the list
-
+        data['final_images'] = cleaned_cutouts
         return data

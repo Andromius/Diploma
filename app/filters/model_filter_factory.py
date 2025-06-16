@@ -5,16 +5,15 @@ from filters.output.feature_vector_extraction import FeatureVectorExtractor
 from logging import Logger
 
 class ModelFilterFactory:
-    def __init__(self, logger : Logger, resources_path: str):
+    def __init__(self, logger : Logger):
         self.model_paths = {"yolo" : "yolo.pt", "maskRCNN" : "maskrcnn.pth", "fastRCNN" : None}
         self.logger = logger
-        self.resources_path = resources_path
 
     def create_model(self, name):        
         if name == "yolo":
-            return YoloSegmentationFilter(name, self.model_paths[name], self.logger, self.resources_path)
+            return YoloSegmentationFilter(name, self.model_paths[name], self.logger)
         elif name == "maskRCNN":
-            return MaskRCNNSegmentationFilter(name, self.model_paths[name], self.logger, self.resources_path)
+            return MaskRCNNSegmentationFilter(name, self.model_paths[name], self.logger)
         elif name == "fastRCNN":
             return FastRCNNSegmentationFilter(name, self.model_paths[name], self.logger)
         elif name == "feature_vector_extractor":

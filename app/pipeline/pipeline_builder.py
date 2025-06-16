@@ -1,4 +1,4 @@
-from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization, morphology, edge_separation, thresholding
+from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization, morphology, edge_separation, thresholding, morphological_gradient, directional_information
 from filters.output import output_filter
 from filters.analysis import similarity_filter
 from filters.model_filter_factory import ModelFilterFactory
@@ -49,8 +49,16 @@ class PipelineBuilder:
         self.pipeline.add_filter(edge_separation.LineSeparationFilter(self.logger))
         return self
     
-    def morphological_operations(self, kernel_size=(3, 3), iterations=5):
-        self.pipeline.add_filter(morphology.MorphologicalOperationsFilter(self.logger, kernel_size, iterations))
+    def morphological_operations(self, kernel_size=(3, 3)):
+        self.pipeline.add_filter(morphology.MorphologicalOperationsFilter(self.logger, kernel_size))
+        return self
+    
+    def morphological_gradient(self, kernel_size=(3, 3)):
+        self.pipeline.add_filter(morphological_gradient.MorphologicalGradientFilter(self.logger, kernel_size))
+        return self
+    
+    def directional_information(self):
+        self.pipeline.add_filter(directional_information.DirectionalInformationFilter(self.logger))
         return self
     
     def thresholding(self, threshold=0.8):
@@ -71,10 +79,12 @@ class PipelineCreator:
     
     def construct_graffiti(self, model_type : str):
         return self.builder.segmentation_model(model_type)\
+                            .output()\
                             .gaussian_blur()\
                             .thresholding()\
                             .morphological_operations()\
-                            .output()\
+                            .morphological_gradient()\
+                            .directional_information()\
                             .separate_lines()\
                             .extract_feature_vector()\
                             .build()
