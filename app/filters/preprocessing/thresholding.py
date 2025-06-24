@@ -28,4 +28,5 @@ class ThresholdingFilter(Filter):
 
         data['thresh'] = thresholded_cutouts
         self.logger.info(f"Applied thresholding with threshold value {self.threshold}.")
+        self.logger.info(f"Size of thresholded images: {len(thresholded_cutouts)}")
         return data

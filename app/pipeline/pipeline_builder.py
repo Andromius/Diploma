@@ -1,7 +1,9 @@
-from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization, morphology, edge_separation, thresholding, morphological_gradient, directional_information
-from filters.output import output_filter
+from filters.output import cutout_filter, output_filter
+from filters.preprocessing import contouring, gaussianblur, grayscaling, histogram_equalization, morphology, edge_separation, thresholding, morphological_gradient, directional_information, segment_threshold_filter
+from filters.output import histogram, database_filter
 from filters.analysis import similarity_filter
 from filters.model_filter_factory import ModelFilterFactory
+from filters.prediction.HDBSCAN import HDBSCANFilter
 from pipeline.pipeline import Pipeline
 from logging import Logger
 import psycopg2
@@ -37,6 +39,10 @@ class PipelineBuilder:
         self.pipeline.add_filter(output_filter.OutputFilter(self.logger))
         return self
     
+    def cutout_filter(self):
+        self.pipeline.add_filter(cutout_filter.CutoutFilter(self.logger))
+        return self
+    
     def extract_feature_vector(self):
         self.pipeline.add_filter(ModelFilterFactory(self.logger).create_model("feature_vector_extractor"))
         return self
@@ -64,6 +70,22 @@ class PipelineBuilder:
     def thresholding(self, threshold=0.8):
         self.pipeline.add_filter(thresholding.ThresholdingFilter(self.logger, threshold))
         return self
+    
+    def create_histograms(self):
+        self.pipeline.add_filter(histogram.HistogramFilter(self.logger))
+        return self
+    
+    def hdbscan(self, connection: psycopg2.extensions.connection):
+        self.pipeline.add_filter(HDBSCANFilter(logger=self.logger, conn = connection))
+        return self
+    
+    def extract_masks(self, threshold=0.8):
+        self.pipeline.add_filter(segment_threshold_filter.SegmentThresholdFilter(self.logger, threshold))
+        return self
+    
+    def database_filter(self, connection: psycopg2.extensions.connection):
+        self.pipeline.add_filter(database_filter.DatabaseFilter(self.logger, connection))
+        return self
 
     def build(self):
         return self.pipeline
@@ -79,7 +101,8 @@ class PipelineCreator:
     
     def construct_graffiti(self, model_type : str):
         return self.builder.segmentation_model(model_type)\
-                            .output()\
+                            .extract_masks()\
+                            .cutout_filter()\
                             .gaussian_blur()\
                             .thresholding()\
                             .morphological_operations()\
@@ -87,4 +110,8 @@ class PipelineCreator:
                             .directional_information()\
                             .separate_lines()\
                             .extract_feature_vector()\
+                            .create_histograms()\
+                            .database_filter(self.connection)\
+                            .hdbscan(self.connection)\
+                            .output()\
                             .build()

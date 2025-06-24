@@ -11,13 +11,13 @@ class Pipeline:
         """
         self.filters.append(filter)
     
-    def execute(self, image):
+    def execute(self, image, image_name=None):
         """
         Executes the pipeline of filters on the input image.
         :param image: The image to process.
         :return: The final processed image.
         """
-        data = {'image': image}
+        data = {'image': image, 'image_name': image_name}
         filter: Filter
         for filter in self.filters:
             data = filter.apply(data)

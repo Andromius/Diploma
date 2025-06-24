@@ -22,7 +22,7 @@ class MorphologicalGradientFilter(Filter):
             enhanced_gradient = cv2.convertScaleAbs(gradient, alpha=5, beta=0)
             #_, binary_edges = cv2.threshold(enhanced_gradient, 10, 255, cv2.THRESH_BINARY)
 
-            gradient_images.append(enhanced_gradient)
+            gradient_images.append(gradient)
 
         data['gradients'] = gradient_images
         return data

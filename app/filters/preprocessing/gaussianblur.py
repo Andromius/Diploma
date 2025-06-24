@@ -14,6 +14,8 @@ class GaussianBlurFilter(Filter):
         if 'final_images' not in data or not isinstance(data['final_images'], list):
             raise ValueError("No final images found in data or final_images is not a list.")
         
+        self.logger.info(f"Size of final images: {len(data['final_images'])}")
+        
         blurred_cutouts = []
         for cutout in data['final_images']:
             blurred_cutout = cv2.GaussianBlur(cutout, self.kernel_size, self.sigma)
@@ -21,5 +23,5 @@ class GaussianBlurFilter(Filter):
 
         data['final_images'] = blurred_cutouts
     
-        self.logger.info(f"Applied Gaussian blur with kernel {self.kernel_size} and sigma {self.sigma}.")
+        self.logger.info(f"Applied Gaussian blur with kernel {self.kernel_size} and sigma {self.sigma} and size {len(data['final_images'])}.")
         return data

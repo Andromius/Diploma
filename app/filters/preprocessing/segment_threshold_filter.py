@@ -31,6 +31,8 @@ class SegmentThresholdFilter(Filter):
             'masks': filtered_masks
         }]
 
+        self.logger.info(f"Size of masks after thresholding: {filtered_masks.shape}")
+
         return data
 
 
